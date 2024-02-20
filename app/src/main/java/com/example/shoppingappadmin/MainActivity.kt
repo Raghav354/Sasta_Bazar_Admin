@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
     val productModel = ProductModel()
-    var categoryList = arrayOf("Dresses", "Tops", "JumpSuits", "Bottoms")
+    var categoryList = arrayOf("Dresses", "Tops", "JumpSuits", "Bottoms","Saree")
 
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -87,21 +87,38 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+
         binding.addProduct.setOnClickListener {
             if (binding.productName.text.toString().isEmpty()) {
                 binding.productName.error = "Error:- Add product name"
-            } else if (binding.price.text.toString().isEmpty()) {
-                binding.price.error = "Error:- Add product price"
+            } else if (binding.discountprice.text.toString().isEmpty()) {
+                binding.discountprice.error = "Error:- Add discount price."
             } else if (binding.disp.text.toString().isEmpty()) {
                 binding.disp.error = "Error:- Add product description"
             } else if (binding.disp.text.toString().trim().length < 80) {
                 binding.disp.error = "Error:- Need more description."
             } else if (productModel.imageUrl.isEmpty()) {
                 Toast.makeText(this@MainActivity, "Add image...!!", Toast.LENGTH_SHORT).show()
-            } else {
+            }else if(binding.originalprice.text.toString().isEmpty()){
+                binding.originalprice.error = "Error:- Add original price."
+            }else if(binding.size.text.toString().isEmpty()) {
+                binding.discountprice.error = "Error:- Provide the size."
+            }else if(binding.color.text.toString().isEmpty()){
+                binding.color.error = "Error:- Provide the Color."
+            }else if(binding.coupanCode.text.toString().isEmpty()){
+                binding.coupanCode.error = "Error:- Provide the CoupanCode."
+            }
+            else {
                 productModel.name = binding.productName.text.toString()
-                productModel.price = binding.price.text.toString().toDouble()
+                productModel.discountPrice = binding.discountprice.text.toString().toDouble()
+                productModel.originalPrice = binding.originalprice.text.toString().toDouble()
+                productModel.productSize = binding.size.text.toString()
+                productModel.productColor  = binding.color.text.toString()
+                val discountPercentageText = binding.discountPercentage.text.toString()
+                productModel.discountPercentage = discountPercentageText.toDoubleOrNull()
+                productModel.productCoupanCode = binding.coupanCode.text.toString()
                 productModel.disp = binding.disp.text.toString()
+
                 Firebase.firestore.collection("Products").document(UUID.randomUUID().toString())
                     .set(productModel).addOnCompleteListener {
                         if (it.isSuccessful) {
@@ -109,7 +126,7 @@ class MainActivity : AppCompatActivity() {
                                 .show()
                         } else {
                             Toast.makeText(
-                                this@MainActivity,
+                                 this@MainActivity,
                                 "Error in adding the product!!",
                                 Toast.LENGTH_SHORT
                             ).show()
