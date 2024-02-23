@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.ShoppingAppAdmin" parent="Base.Theme.ShoppingAppAdmin" />
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/text_bg</item>
+    </style>
+
 </resources>

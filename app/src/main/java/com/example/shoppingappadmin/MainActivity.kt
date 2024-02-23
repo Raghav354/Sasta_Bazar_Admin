@@ -21,7 +21,8 @@ class MainActivity : AppCompatActivity() {
         ActivityMainBinding.inflate(layoutInflater)
     }
     val productModel = ProductModel()
-    var categoryList = arrayOf("Dresses", "Tops", "JumpSuits", "Bottoms","Saree")
+    var categoryList = arrayOf("Dresses", "Tops", "JumpSuits", "Bottoms", "Saree")
+    private var discountedPercent: Double = 0.0
 
     private val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -113,11 +114,17 @@ class MainActivity : AppCompatActivity() {
                 productModel.discountPrice = binding.discountprice.text.toString().toDouble()
                 productModel.originalPrice = binding.originalprice.text.toString().toDouble()
                 productModel.productSize = binding.size.text.toString()
-                productModel.productColor  = binding.color.text.toString()
-                val discountPercentageText = binding.discountPercentage.text.toString()
-                productModel.discountPercentage = discountPercentageText.toDoubleOrNull()
+                productModel.productColor = binding.color.text.toString()
                 productModel.productCoupanCode = binding.coupanCode.text.toString()
                 productModel.disp = binding.disp.text.toString()
+                discountedPercent = calculateDiscount(
+                    binding.originalprice.text.toString().toDouble(),
+                    binding.discountprice.text.toString().toDouble()
+                )
+                val formattedDiscountPercentage = String.format("%.2f", discountedPercent)
+                val discountedPercentWithTwoDecimal = formattedDiscountPercentage.toDouble()
+                productModel.discountPercentage = discountedPercentWithTwoDecimal
+
 
                 Firebase.firestore.collection("Products").document(UUID.randomUUID().toString())
                     .set(productModel).addOnCompleteListener {
@@ -126,7 +133,7 @@ class MainActivity : AppCompatActivity() {
                                 .show()
                         } else {
                             Toast.makeText(
-                                 this@MainActivity,
+                                this@MainActivity,
                                 "Error in adding the product!!",
                                 Toast.LENGTH_SHORT
                             ).show()
@@ -135,5 +142,11 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+    }
+
+    fun calculateDiscount(originalPrice: Double, discountedPrice: Double): Double {
+        val discountAmount = originalPrice - discountedPrice
+        val discountPercentage = (discountAmount / originalPrice) * 100
+        return discountPercentage
     }
 }
