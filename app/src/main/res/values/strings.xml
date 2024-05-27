@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">shopping app admin</string>
+    <string name="already_registered_login">Already registered? <b>Login</b></string>
+    <string name="don_t_have_an_account_yet_register">Don\'t have an account yet? <b>Register</b></string>
 </resources>

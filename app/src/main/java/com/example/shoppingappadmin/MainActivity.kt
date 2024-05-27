@@ -20,8 +20,12 @@ class MainActivity : AppCompatActivity() {
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
     val productModel = ProductModel()
-    var categoryList = arrayOf("Dresses", "Tops", "JumpSuits", "Bottoms", "Saree")
+    var categoryList = arrayOf(
+        "Dresses", "Tops", "JumpSuits", "Bottoms", "Saree",
+        "Kurti","Trouser","Shirt" , "Accessories"
+    )
     private var discountedPercent: Double = 0.0
 
     private val startForProfileImageResult =
@@ -32,7 +36,7 @@ class MainActivity : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK) {
                 binding.rootLayout.setBackgroundColor(Color.LTGRAY)
                 binding.mainLayout.visibility = View.GONE
-                binding.spinKit.visibility = View.VISIBLE
+                binding.spinKit.visibility = View.VISIBLE    //Loader appers on the UI.
                 //Image Uri will not be null for RESULT_OK
                 val fileUri = data?.data!!
 
@@ -121,6 +125,8 @@ class MainActivity : AppCompatActivity() {
                     binding.originalprice.text.toString().toDouble(),
                     binding.discountprice.text.toString().toDouble()
                 )
+                binding.spinKit.visibility = View.VISIBLE
+                binding.mainLayout.visibility = View.GONE
                 val formattedDiscountPercentage = String.format("%.2f", discountedPercent)
                 val discountedPercentWithTwoDecimal = formattedDiscountPercentage.toDouble()
                 productModel.discountPercentage = discountedPercentWithTwoDecimal
@@ -138,8 +144,43 @@ class MainActivity : AppCompatActivity() {
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
+                        binding.spinKit.visibility = View.INVISIBLE
+                        binding.mainLayout.visibility = View.VISIBLE
+
                     }
             }
+
+        }
+    }
+
+    private fun makeViewInvisible() {
+        binding.apply {
+            productImage.visibility = View.INVISIBLE
+            category.visibility = View.INVISIBLE
+            productName.visibility = View.INVISIBLE
+            originalprice.visibility = View.INVISIBLE
+            discountprice.visibility = View.INVISIBLE
+            size.visibility = View.INVISIBLE
+            color.visibility = View.INVISIBLE
+            coupanCode.visibility = View.INVISIBLE
+            disp.visibility = View.INVISIBLE
+            addProduct.visibility = View.INVISIBLE
+
+        }
+    }
+    private fun makeViewVisible() {
+        binding.apply {
+            productImage.visibility = View.VISIBLE
+            category.visibility = View.VISIBLE
+            productName.visibility = View.VISIBLE
+            originalprice.visibility = View.VISIBLE
+            discountprice.visibility = View.VISIBLE
+            size.visibility = View.VISIBLE
+            color.visibility = View.VISIBLE
+            coupanCode.visibility = View.VISIBLE
+            disp.visibility = View.VISIBLE
+            addProduct.visibility = View.VISIBLE
+
 
         }
     }
