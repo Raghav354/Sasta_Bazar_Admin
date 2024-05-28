@@ -1,6 +1,7 @@
 package com.example.shoppingappadmin
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.shoppingappadmin.databinding.ActivityMainBinding
 import com.github.dhaval2404.imagepicker.ImagePicker
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -150,6 +152,13 @@ class MainActivity : AppCompatActivity() {
                     }
             }
 
+        }
+
+        binding.logoutBtn.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
         }
     }
 

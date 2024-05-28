@@ -1,6 +1,8 @@
 package com.example.shoppingappadmin
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -14,6 +16,8 @@ import com.google.firebase.auth.FirebaseAuth
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var auth: FirebaseAuth
+    private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -27,6 +31,9 @@ class LoginActivity : AppCompatActivity() {
         }
 
         auth = FirebaseAuth.getInstance()
+        sharedPreferences = getSharedPreferences("LoginPrefs", Context.MODE_PRIVATE)
+
+        checkRememberedCredentials()
 
         binding.loginbutton.setOnClickListener {
             val email = binding.email.text.toString()
@@ -48,6 +55,24 @@ class LoginActivity : AppCompatActivity() {
         binding.forgotpassword.setOnClickListener {
             resetPassword(binding.email.text.toString())
         }
+
+        binding.rememberMeCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                val email = binding.email.text.toString()
+                val password = binding.password.text.toString()
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    saveCredentials(email, password)
+                    Toast.makeText(this, "Credentials saved", Toast.LENGTH_SHORT).show()
+                } else {
+                    clearCredentials()
+                    binding.rememberMeCheckbox.isChecked = false
+                    Toast.makeText(this, "Please provide email and password", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                clearCredentials()
+                Toast.makeText(this, "Credentials cleared", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
     private fun loginUser(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
@@ -67,7 +92,6 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(baseContext, "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
-
     }
 
     private fun resetPassword(email: String) {
@@ -92,5 +116,29 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "Please provide the mail...", Toast.LENGTH_SHORT).show()
         }
 
+    }
+
+    private fun checkRememberedCredentials() {
+        val rememberedEmail = sharedPreferences.getString("email", "")
+        val rememberedPassword = sharedPreferences.getString("password", "")
+        if (!rememberedEmail.isNullOrEmpty() && !rememberedPassword.isNullOrEmpty()) {
+            binding.email.setText(rememberedEmail)
+            binding.password.setText(rememberedPassword)
+            binding.rememberMeCheckbox.isChecked = true
+        }
+    }
+
+    private fun saveCredentials(email: String, password: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("email", email)
+        editor.putString("password", password)
+        editor.apply()
+    }
+
+    private fun clearCredentials() {
+        val editor = sharedPreferences.edit()
+        editor.remove("email")
+        editor.remove("password")
+        editor.apply()
     }
 }
